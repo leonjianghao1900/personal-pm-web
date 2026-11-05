@@ -1,0 +1,48 @@
+# personal-pm-web — Cloudflare Python Worker
+# Account: a6e26dc57cfe441fd9c1762b7a1b1887
+# D1 personal-pm-web: f6027921-2fed-4bae-8b09-f11d408aa0e2
+# R2: personal-pm-web-attachments
+# workers.dev: https://personal-pm-web.leondoubao.workers.dev
+#
+# The Worker also applies schema SQL on first request. migrations/ is for
+# `pywrangler d1 migrations apply personal-pm-web --remote`.
+
+name = "personal-pm-web"
+main = "src/worker.py"
+account_id = "a6e26dc57cfe441fd9c1762b7a1b1887"
+compatibility_date = "2026-11-05"
+compatibility_flags = ["python_workers"]
+workers_dev = true
+
+# Workers Free has no custom CPU limit. PBKDF2 runs in WebCrypto (authutil.py).
+
+[observability]
+enabled = true
+
+[observability.traces]
+enabled = true
+
+[vars]
+ADMIN_EMAIL = "leondoubao@hotmail.com"
+
+# Set both before deploy. Do not put the password or these values in git.
+#   npx wrangler secret put JWT_SECRET
+#   npx wrangler secret put ADMIN_PASSWORD_HASH
+[secrets]
+required = ["JWT_SECRET", "ADMIN_PASSWORD_HASH"]
+
+[assets]
+directory = "./frontend/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "personal-pm-web"
+database_id = "f6027921-2fed-4bae-8b09-f11d408aa0e2"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "ATTACHMENTS"
+bucket_name = "personal-pm-web-attachments"

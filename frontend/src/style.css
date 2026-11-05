@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --page-fg: #1d1d1f;
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.9);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255, 255, 255, 1) inset;
+  }
+  .dark {
+    --page-fg: #e6e6ea;
+    --glass-bg: rgba(28, 28, 32, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+  }
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", system-ui, sans-serif;
+    color: var(--page-fg);
+    background:
+      radial-gradient(ellipse at 15% 0%, #c7e0ff 0%, transparent 45%),
+      radial-gradient(ellipse at 85% 100%, #ffd6e7 0%, transparent 45%),
+      linear-gradient(180deg, #f5f5f7 0%, #ececf1 100%);
+    background-attachment: fixed;
+    transition: color 0.2s ease, background 0.2s ease;
+  }
+  .dark html, .dark body, html.dark, html.dark body {
+    background:
+      radial-gradient(ellipse at 15% 0%, #1e3a5f 0%, transparent 45%),
+      radial-gradient(ellipse at 85% 100%, #3a1f3f 0%, transparent 45%),
+      linear-gradient(180deg, #0e0e10 0%, #1a1a1d 100%);
+  }
+}
+
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .glass-card {
+    @apply glass rounded-2xl;
+  }
+}
