@@ -4,8 +4,8 @@
 # R2: personal-pm-web-attachments
 # workers.dev: https://personal-pm-web.leondoubao.workers.dev
 #
-# The Worker also applies schema SQL on first request. migrations/ is for
-# `pywrangler d1 migrations apply personal-pm-web --remote`.
+# Schema SQL is applied only when schema_migrations is missing or older.
+# migrations/ is for `pywrangler d1 migrations apply personal-pm-web --remote`.
 
 name = "personal-pm-web"
 main = "src/worker.py"
@@ -14,7 +14,9 @@ compatibility_date = "2026-11-05"
 compatibility_flags = ["python_workers"]
 workers_dev = true
 
-# Workers Free has no custom CPU limit. PBKDF2 runs in WebCrypto (authutil.py).
+# Workers Free has no custom CPU limit (~10ms). Do not proxy static files
+# through Pyodide, and do not set cpu_ms (Free rejects it). PBKDF2 stays in
+# WebCrypto (authutil.py) at the existing 100000-iteration hash format.
 
 [observability]
 enabled = true
@@ -35,7 +37,9 @@ required = ["JWT_SECRET", "ADMIN_PASSWORD_HASH"]
 directory = "./frontend/dist"
 binding = "ASSETS"
 not_found_handling = "single-page-application"
-run_worker_first = true
+# API only. A blanket `true` runs the Python worker for every JS/CSS/HTML
+# request, and each of those used to replay the D1 schema.
+run_worker_first = [ "/api/*" ]
 
 [[d1_databases]]
 binding = "DB"

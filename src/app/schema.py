@@ -2,8 +2,9 @@
 
 `migrations/0001_init.sql` is generated from SCHEMA_SQL so Wrangler D1
 migrations and the Worker's own boot-time `CREATE TABLE IF NOT EXISTS` cannot
-drift. The Worker applies this SQL on first request because a fresh D1 binding
-may not have been migrated yet.
+drift. The Worker runs this SQL only when `schema_migrations` is missing or
+older than SCHEMA_VERSION, once per isolate. A fresh D1 binding may not have
+been migrated yet; an already-migrated database is a single version read.
 """
 
 SCHEMA_VERSION = 1
