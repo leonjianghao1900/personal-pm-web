@@ -49,6 +49,11 @@ def create_app() -> FastAPI:
 
     @app.middleware("http")
     async def bind_runtime(request: Request, call_next):
+        # HTML, JS, and CSS must not open D1. On Workers those paths are served
+        # by static assets; this also covers local files and a Worker that is
+        # still invoked for a non-API GET.
+        if not request.url.path.startswith("/api"):
+            return await call_next(request)
         try:
             _bind_request(request)
             await ensure_ready(request.state.db, request.state.settings)
